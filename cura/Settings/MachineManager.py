@@ -543,6 +543,8 @@ class MachineManager(QObject):
         if containers:
             new_name = self._createUniqueName("quality", "", containers[0].getName(), catalog.i18nc("@label", "Custom profile"))
 
+            from UM.Logger import Logger
+            Logger.log("d", "##### Machine Manager duplicate")
             new_container = containers[0].duplicate(new_name, new_name)
 
             UM.Settings.ContainerRegistry.getInstance().addContainer(new_container)

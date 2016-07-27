@@ -301,6 +301,8 @@ class CuraApplication(QtApplication):
 
             mime_type = ContainerRegistry.getMimeTypeForContainer(type(instance))
             file_name = urllib.parse.quote_plus(instance.getId()) + "." + mime_type.preferredSuffix
+            from UM.Logger import Logger
+            Logger.log("d", "## going to save %s...", file_name)
             instance_type = instance.getMetaDataEntry("type")
             path = None
             if instance_type == "material":
@@ -311,6 +313,8 @@ class CuraApplication(QtApplication):
                 path = Resources.getStoragePath(self.ResourceTypes.UserInstanceContainer, file_name)
             elif instance_type == "variant":
                 path = Resources.getStoragePath(self.ResourceTypes.VariantInstanceContainer, file_name)
+
+            Logger.log("d", "## path= %s...", path)
 
             if path:
                 with SaveFile(path, "wt", -1, "utf-8") as f:
@@ -877,3 +881,8 @@ class CuraApplication(QtApplication):
 
     def getBuildVolume(self):
         return self._volume
+
+    @pyqtSlot(str)
+    def log(self, msg):
+        from UM.Logger import Logger
+        Logger.log("d", msg)

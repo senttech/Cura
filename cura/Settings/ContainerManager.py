@@ -43,24 +43,27 @@ class ContainerManager(QObject):
     def duplicateContainer(self, container_id):
         containers = self._registry.findContainers(None, id = container_id)
         if not containers:
-            UM.Logger.log("w", "Could duplicate container %s because it was not found.", container_id)
+            UM.Logger.log("w", "Could not duplicate container %s because it was not found.", container_id)
             return ""
 
         container = containers[0]
 
-        new_container = None
+        new_id = self._registry.uniqueName(container.getId())
         new_name = self._registry.uniqueName(container.getName())
         # Only InstanceContainer has a duplicate method at the moment.
         # So fall back to serialize/deserialize when no duplicate method exists.
         if hasattr(container, "duplicate"):
-            new_container = container.duplicate(new_name)
+            from UM.Logger import Logger
+            Logger.log("d", "##### Container Manager duplicate [%s] new name: [%s], new id: [%s]" % (container_id, new_name, new_id))
+
+            new_container = container.duplicate(new_id, new_name=new_name)
         else:
             new_container = container.__class__(new_name)
             new_container.deserialize(container.serialize())
             new_container.setName(new_name)
 
-        if new_container:
-            self._registry.addContainer(new_container)
+        # if new_container:
+        self._registry.addContainer(new_container)
 
         return new_container.getId()
 

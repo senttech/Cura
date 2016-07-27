@@ -74,15 +74,20 @@ UM.ManagementPage
             enabled: base.currentItem != null
             onClicked:
             {
+                CuraApplication.log("duplicate material: "+base.currentItem.id);
                 var material_id = Cura.ContainerManager.duplicateContainer(base.currentItem.id)
-                if(material_id == "")
+                /*if(material_id == "")
                 {
                     return
-                }
+                }*/
 
                 if(Cura.MachineManager.filterQualityByMachine)
                 {
+                    CuraApplication.log("## duplicate quality: "+Cura.MachineManager.activeQualityId);
+                    CuraApplication.log("### material_id: " + material_id);
                     var quality_id = Cura.ContainerManager.duplicateContainer(Cura.MachineManager.activeQualityId)
+                    CuraApplication.log("### quality id: " + quality_id);
+
                     Cura.ContainerManager.setContainerMetaDataEntry(quality_id, "material", material_id)
                     Cura.MachineManager.setActiveQuality(quality_id)
                 }

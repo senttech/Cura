@@ -20,28 +20,47 @@ class XmlMaterialProfile(UM.Settings.InstanceContainer):
 
     ##  Overridden from InstanceContainer
     def duplicate(self, new_id, new_name = None):
+        from UM.Logger import Logger
         base_file = self.getMetaDataEntry("base_file", None)
         new_uuid = str(uuid.uuid4())
 
+        new_basefile = None
+
         if base_file:
+            # Duplicate the base file
             containers = UM.Settings.ContainerRegistry.getInstance().findInstanceContainers(id = base_file)
             if containers:
+                Logger.log("d", "### base file: %s" % base_file)
+                Logger.log("d", "### new base file id: %s" % str(self.getMetaDataEntry("brand") + "_" + new_id))
+                if len(new_id) > 1250:
+                    asdf
+                Logger.log("d", "### new base file name: %s" % str(new_name))
                 new_basefile = containers[0].duplicate(self.getMetaDataEntry("brand") + "_" + new_id, new_name)
                 new_basefile.setMetaDataEntry("GUID", new_uuid)
+                Logger.log("d", "### new base_file: %s" % new_basefile.getMetaDataEntry("base_file", None))
                 base_file = new_basefile.id
                 UM.Settings.ContainerRegistry.getInstance().addContainer(new_basefile)
 
                 new_id = self.getMetaDataEntry("brand") + "_" + new_id + "_" + self.getDefinition().getId()
                 variant = self.getMetaDataEntry("variant")
                 if variant:
+                    Logger.log("d", "## We're dealing with a variant here...")
                     variant_containers = UM.Settings.ContainerRegistry.getInstance().findInstanceContainers(id = variant)
                     if variant_containers:
                         new_id += "_" + variant_containers[0].getName().replace(" ", "_")
+                        Logger.log("d", "variant base_file: %s" % variant_containers[0].getMetaDataEntry("base_file", None))
+            else:
+                Logger.log("w", "Container has a base_file, but it could not be found [%s]" % base_file)
 
+        Logger.log("d", "## new_id, name: %s %s" % (new_id, new_name))
         result = super().duplicate(new_id, new_name)
+        # UM.Settings.ContainerRegistry.getInstance().addContainer(result)
         result.setMetaDataEntry("GUID", new_uuid)
-        if result.getMetaDataEntry("base_file", None):
-            result.setMetaDataEntry("base_file", base_file)
+
+        # if result.getMetaDataEntry("base_file", None) is not None:
+        # Assign new base file if a base file was already in place
+        if new_basefile is not None:
+            result.setMetaDataEntry("base_file", new_basefile)
         return result
 
     ##  Overridden from InstanceContainer
