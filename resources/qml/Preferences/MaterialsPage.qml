@@ -89,6 +89,7 @@ UM.ManagementPage
                     CuraApplication.log("### quality id: " + quality_id);
 
                     Cura.ContainerManager.setContainerMetaDataEntry(quality_id, "material", material_id)
+                    // Cura.ContainerManager.setContainerMetaDataEntry(quality_id, "material", "Generic_generic_pla_ultimaker2_extended_plus_0.4_mm #2")
                     Cura.MachineManager.setActiveQuality(quality_id)
                 }
 

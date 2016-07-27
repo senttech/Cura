@@ -674,7 +674,7 @@ class MachineManager(QObject):
             return
 
         old_quality = self._active_container_stack.findContainer({"type": "quality"})
-        if old_quality and old_quality != containers[0]:
+        if old_quality and old_quality != containers[0].id:
             old_quality.nameChanged.disconnect(self._onQualityNameChanged)
 
             quality_index = self._active_container_stack.getContainerIndex(old_quality)

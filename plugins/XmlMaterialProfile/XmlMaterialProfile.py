@@ -36,10 +36,10 @@ class XmlMaterialProfile(UM.Settings.InstanceContainer):
                     asdf
                 Logger.log("d", "### new base file name: %s" % str(new_name))
                 new_basefile = containers[0].duplicate(self.getMetaDataEntry("brand") + "_" + new_id, new_name)
-                new_basefile.setMetaDataEntry("GUID", new_uuid)
+                # new_basefile.setMetaDataEntry("GUID", new_uuid)
                 Logger.log("d", "### new base_file: %s" % new_basefile.getMetaDataEntry("base_file", None))
-                base_file = new_basefile.id
-                UM.Settings.ContainerRegistry.getInstance().addContainer(new_basefile)
+                if not UM.Settings.ContainerRegistry.getInstance().findContainers(id=new_basefile.id):
+                    UM.Settings.ContainerRegistry.getInstance().addContainer(new_basefile)
 
                 new_id = self.getMetaDataEntry("brand") + "_" + new_id + "_" + self.getDefinition().getId()
                 variant = self.getMetaDataEntry("variant")
@@ -52,15 +52,18 @@ class XmlMaterialProfile(UM.Settings.InstanceContainer):
             else:
                 Logger.log("w", "Container has a base_file, but it could not be found [%s]" % base_file)
 
-        Logger.log("d", "## new_id, name: %s %s" % (new_id, new_name))
+        Logger.log("d", "## new_id, name: [%s] [%s]" % (new_id, new_name))
         result = super().duplicate(new_id, new_name)
-        # UM.Settings.ContainerRegistry.getInstance().addContainer(result)
+        UM.Settings.ContainerRegistry.getInstance().addContainer(result)
         result.setMetaDataEntry("GUID", new_uuid)
 
         # if result.getMetaDataEntry("base_file", None) is not None:
         # Assign new base file if a base file was already in place
         if new_basefile is not None:
-            result.setMetaDataEntry("base_file", new_basefile)
+            new_base_file_id = new_basefile.id
+            Logger.log("d", "## setting new base file id [%s]" % new_base_file_id)
+            result.setMetaDataEntry("base_file", new_base_file_id)
+
         return result
 
     ##  Overridden from InstanceContainer
@@ -99,12 +102,12 @@ class XmlMaterialProfile(UM.Settings.InstanceContainer):
     def serialize(self):
         registry = UM.Settings.ContainerRegistry.getInstance()
 
-        base_file = self.getMetaDataEntry("base_file", "")
-        if base_file and self.id != base_file:
-            # Since we create an instance of XmlMaterialProfile for each machine and nozzle in the profile,
-            # we should only serialize the "base" material definition, since that can then take care of
-            # serializing the machine/nozzle specific profiles.
-            raise NotImplementedError("Cannot serialize non-root XML materials")
+        # base_file = self.getMetaDataEntry("base_file", "")
+        # if base_file and self.id != base_file:
+        #     # Since we create an instance of XmlMaterialProfile for each machine and nozzle in the profile,
+        #     # we should only serialize the "base" material definition, since that can then take care of
+        #     # serializing the machine/nozzle specific profiles.
+        #     raise NotImplementedError("Cannot serialize non-root XML materials")
 
         builder = ET.TreeBuilder()
 

@@ -62,8 +62,17 @@ class ContainerManager(QObject):
             new_container.deserialize(container.serialize())
             new_container.setName(new_name)
 
-        # if new_container:
-        self._registry.addContainer(new_container)
+        # Check if container is already added during duplicate
+        if new_container and not self._registry.findContainers(id=new_container.id):
+            from UM.Logger import Logger
+            Logger.log("d", "##### adding to registry [%s]" % (new_container.id))
+            # if new_container.id == "um2ep_pla_0.4_high #2":
+            #     pass
+            self._registry.addContainer(new_container)
+        else:
+            from UM.Logger import Logger
+            Logger.log("d", "##### Container Manager not adding [%s]" % (new_container.id))
+
 
         return new_container.getId()
 
@@ -181,7 +190,11 @@ class ContainerManager(QObject):
     #   \return True if successful, False if not.
     @pyqtSlot(str, str, str, result = bool)
     def setContainerMetaDataEntry(self, container_id, entry_name, entry_value):
+        if container_id == "um2ep_pla_0.4_high #2":
+            pass
+
         containers = UM.Settings.ContainerRegistry.getInstance().findContainers(None, id = container_id)
+        # containers = UM.Settings.ContainerRegistry.getInstance().findContainers(id = container_id)
         if not containers:
             UM.Logger.log("w", "Could set metadata of container %s because it was not found.", container_id)
             return False
