@@ -68,7 +68,7 @@ class SolidView(View):
 
                         material_color = self._extruders_model.getItem(extruder_index)["colour"]
                     try:
-                        color = Color.fromRGBString(material_color)
+                        color = Color.fromHexString(material_color)
                         uniforms["diffuse_color"] = [color.r, color.g, color.b, color.a]
                     except ValueError:
                         pass

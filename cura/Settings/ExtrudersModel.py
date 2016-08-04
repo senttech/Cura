@@ -156,7 +156,7 @@ class ExtrudersModel(UM.Qt.ListModel.ListModel):
     def _colourShade(self, base_colour, shade):
         colour_shade = base_colour
         if shade > 0:
-            new_colour = UM.Math.Color.Color.fromRGBString(base_colour)
+            new_colour = UM.Math.Color.Color.fromHexString(base_colour)
             if (new_colour.r + new_colour.g + new_colour.b) / 3 < .5:
                 mix = 1 # lighten the shade
             else:
@@ -167,6 +167,6 @@ class ExtrudersModel(UM.Qt.ListModel.ListModel):
                 new_colour.b * (1 - shade) + shade * mix,
                 1.0
             )
-            colour_shade = new_colour.toRGBString()
+            colour_shade = new_colour.toHexString(include_alpha = False)
 
         return colour_shade
