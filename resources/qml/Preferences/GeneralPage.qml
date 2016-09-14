@@ -96,6 +96,7 @@ UM.PreferencesPage
                         append({ text: catalog.i18nc("@item:inlistbox", "German"), code: "de" })
                         append({ text: catalog.i18nc("@item:inlistbox", "Italian"), code: "it" })
                         append({ text: catalog.i18nc("@item:inlistbox", "Dutch"), code: "nl" })
+                        append({ text: catalog.i18nc("@item:inlistbox", "Polish"), code: "pl" })
                         append({ text: catalog.i18nc("@item:inlistbox", "Spanish"), code: "es" })
                     }
                 }
